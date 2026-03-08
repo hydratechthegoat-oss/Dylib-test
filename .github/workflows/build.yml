@@ -1,0 +1,22 @@
+name: Build and Release Dylib
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: macos-latest  # Essential for dylib compatibility
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Compile Dylib
+        run: |
+          # Links with libcurl which is built into macOS
+          clang -dynamiclib -o tracker.dylib tracker.c -lcurl
+
+      - name: Upload Dylib to GitHub
+        uses: actions/upload-artifact@v4
+        with:
+          name: injected-tracker
+          path: tracker.dylib
