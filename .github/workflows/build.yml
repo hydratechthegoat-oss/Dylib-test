@@ -15,16 +15,17 @@ jobs:
 
       - name: Compile for iOS
         run: |
-          # Use xcrun to find the specific iPhoneOS SDK
+          # Find the exact path to the iPhoneOS SDK
           SDK_PATH=$(xcrun --sdk iphoneos --show-sdk-path)
           
-          # Force the target to arm64-apple-ios
+          # Compile with explicit header search paths
           clang -dynamiclib \
           -target arm64-apple-ios14.0 \
           -isysroot "$SDK_PATH" \
+          -I"$SDK_PATH/usr/include" \
+          -L"$SDK_PATH/usr/lib" \
           -o tracker.dylib tracker.c \
-          -lcurl \
-          -framework Foundation
+          -lcurl
 
       - name: Pseudo-sign dylib
         run: ldid -S tracker.dylib
